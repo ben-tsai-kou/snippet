@@ -2,9 +2,7 @@ import { db } from '@/db';
 import { notFound } from 'next/navigation';
 
 type Props = {
-    params: Promise<{
-        id: string;
-    }>;
+    params: Promise<{ id: string }>;
 };
 
 export default async function SnippetShowPage({ params }: Props) {
