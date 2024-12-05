@@ -1,31 +1,18 @@
-import { db } from '@/db';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { createSnippet } from '@/actions';
+import React from 'react';
 
 export default function CreateSnippetPage() {
-    const createSnippet = async (formData: FormData) => {
-        // this needs to be a serve action
-        'use server';
-
-        // check the user's inputs and make sure they're valid
-        const title = formData.get('title') as string;
-        const code = formData.get('code') as string;
-
-        // create a new record in the database
-        const snippet = await db.snippet.create({
-            data: {
-                title,
-                code,
-            },
-        });
-
-        console.log(snippet);
-
-        // redirect the user back to the root route
-        redirect('/');
-    };
+    // useActionState 的第一個 params 是 server action function，第二個 params 是 action 的初始 state
+    const [formState, action] = React.useActionState(createSnippet, {
+        title: '',
+        code: '',
+        message: '',
+    });
 
     return (
-        <form action={createSnippet}>
+        <form action={action}>
             <h3 className="font-bold m-3">Create a Snippet</h3>
             <div className="flex flex-col gap-4">
                 <div className="flex gap-4">
@@ -36,6 +23,7 @@ export default function CreateSnippetPage() {
                         name="title"
                         className="border rounded p-2 w-full"
                         id="title"
+                        defaultValue={formState.title}
                     />
                 </div>
 
@@ -47,8 +35,15 @@ export default function CreateSnippetPage() {
                         className="border rounded p-2 w-full"
                         id="code"
                         name="code"
+                        defaultValue={formState.code}
                     />
                 </div>
+
+                {formState?.message && (
+                    <div className="my-2 p-2 bg-red-200 border rounded border-red-400">
+                        {formState.message}
+                    </div>
+                )}
 
                 <button type="submit" className="rounded p-2 bg-blue-200">
                     Create
