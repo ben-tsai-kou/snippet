@@ -7,6 +7,13 @@ type Props = {
     params: Promise<{ id: string }>;
 };
 
+export async function generateStaticParams() {
+    const snippets = await db.snippet.findMany();
+    return snippets.map((snippet) => ({
+        id: snippet.id.toString(),
+    }));
+}
+
 export default async function SnippetShowPage({ params }: Props) {
     const { id } = await params;
 
